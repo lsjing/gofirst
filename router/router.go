@@ -28,6 +28,7 @@ func Setup() *gin.Engine  {
 	Router.GET("/say", ctrl.SayAction)
 	Router.GET("/run", user.RunAction)
 	Router.GET("/read", user.ReadDBAction)
+	Router.POST("/user/add", user.WriteDBAction)
 
 	viewPath := utils.Config.Section("router").Key("view_path").String()
 	Router.LoadHTMLGlob(viewPath)

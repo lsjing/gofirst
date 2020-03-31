@@ -15,7 +15,7 @@ func UserAdd(user *entitys.User)  {
 	}
 }
 
-func UserOne() (*entitys.User,bool) {
+func UserOne() (*entitys.User, bool) {
 	orm:= models.GetSlave()
 	user := new(entitys.User)
 	has, err := orm.Where("name=?", "laodeng").Get(user)
