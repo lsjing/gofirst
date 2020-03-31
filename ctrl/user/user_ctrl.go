@@ -58,9 +58,9 @@ func WriteDBAction(ctx *gin.Context) {
 	name := ctx.PostForm("name")
 	age_str := ctx.PostForm("age")
 	age_int, _ := strconv.Atoi(age_str)
+	var err bool
+	err = user_model.UserAdd(&entitys.User{Name: name, Age: age_int})
 
-	user_model.UserAdd(&entitys.User{Name: name, Age: age_int})
-
-	ctx.JSON(http.StatusOK,utils.ResponseNode{Code: 0, Msg:"123", Data:"zebras"})
+	ctx.JSON(http.StatusOK,utils.ResponseNode{Code: 0, Msg:"123", Data:"ssss", Val: err})
 
 }
