@@ -6,7 +6,7 @@ import (
 	"github.com/lsjing/gofirst/models"
 )
 
-func UserAdd(user *entitys.User) (bool) {
+func UserAdd(user *entitys.User) bool {
 	orm:= models.GetMaster()
 	_,err:=orm.Insert(user)
 	if err != nil {
