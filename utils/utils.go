@@ -21,9 +21,3 @@ func init()  {
 
 }
 
-type ResponseNode struct {
-	Code int    `json:"code"`
-	Msg  string `json:"msg"`
-	Data string `json:"data"`
-	Val  bool   `json:"value"`
-}

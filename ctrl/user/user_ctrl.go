@@ -1,14 +1,16 @@
 package user
 
 import (
+	//"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/lsjing/gofirst/models/users"
 	"github.com/lsjing/gofirst/entitys"
 	"github.com/lsjing/gofirst/utils"
 	"strconv"
-	"github.com/thedevsaddam/govalidator"
+	//"github.com/thedevsaddam/govalidator"
 	"net/http"
+	"unicode/utf8"
 )
 
 func RunAction(c *gin.Context) {
@@ -21,7 +23,6 @@ func ReadDBAction(ctx *gin.Context) {
 
 	if err == nil {
 		for _, user := range users {
-
 			fmt.Println(user.Name)
 		}
 
@@ -30,37 +31,42 @@ func ReadDBAction(ctx *gin.Context) {
 
 func WriteDBAction(ctx *gin.Context) {
 	//参数检验
-	rules := govalidator.MapData{
-		"name": []string{"required", "between:3,8"},
-		"age":  []string{"digits:2"},
-	}
+	name := ctx.PostForm("name")
+	ageStr := ctx.PostForm("age")
 
-	messages := govalidator.MapData{
-		"name": []string{"required:用户名不能为空", "between:3到8位"},
-		"age":  []string{"digits:手机号码为11位数字"},
-	}
+	nameCount := utf8.RuneCountInString(name)
+	ageStrCount := utf8.RuneCountInString(ageStr)
 
-	opts := govalidator.Options{
-		Request:         ctx.Request, // request object
-		Rules:           rules,       // rules map
-		Messages:        messages,    // custom message map (Optional)
-		RequiredDefault: false,       // all the field to be pass the rules
-	}
-	v := govalidator.New(opts)
-	e := v.Validate()
-
-	//校验结果判断
-	if len(e)>0 {
-		ctx.JSON(200, e)
+	if nameCount > 8 || nameCount < 3 {
+		ctx.JSON(http.StatusOK, utils.ResponseNode{Code: 1, Msg:"name长度错误"})
 		return
 	}
 
-	name := ctx.PostForm("name")
-	age_str := ctx.PostForm("age")
-	age_int, _ := strconv.Atoi(age_str)
-	var err bool
-	err = user_model.UserAdd(&entitys.User{Name: name, Age: age_int})
+	if ageStrCount > 2 || ageStrCount < 1 {
+		ctx.JSON(http.StatusOK, utils.ResponseNode{Code: 2, Msg:"age长度错误"})
+		return
+	}
 
-	ctx.JSON(http.StatusOK,utils.ResponseNode{Code: 0, Msg:"123", Data:"ssss", Val: err})
+	age_int, _ := strconv.Atoi(ageStr)
+	err := user_model.UserAdd(&entitys.User{Name: name, Age: age_int})
 
+	code := 0
+	if !err {
+		code = 3
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"code":code, "msg":"ok"})
+}
+
+func UserListAction(ctx *gin.Context) {
+	xusers, err := user_model.UserList()
+	code := 0
+	if err != nil {
+		code = 1
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg" : "ok",
+		"data": xusers,
+	})
 }

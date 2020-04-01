@@ -2,10 +2,8 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-)
-import "net/http"
-import "github.com/lsjing/gofirst/utils"
-import (
+	"net/http"
+	"github.com/lsjing/gofirst/utils"
 	"github.com/lsjing/gofirst/ctrl"
 	"github.com/lsjing/gofirst/ctrl/user"
 )
@@ -16,7 +14,7 @@ func init()  {
 	Router = gin.Default()
 }
 
-func Setup() *gin.Engine  {
+func Setup() *gin.Engine {
 
 	public := utils.Config.Section("router").Key("public").String()
 	Router.Static("/public", public)
@@ -29,6 +27,8 @@ func Setup() *gin.Engine  {
 	Router.GET("/run", user.RunAction)
 	Router.GET("/read", user.ReadDBAction)
 	Router.POST("/user/add", user.WriteDBAction)
+	//Router.GET("/show", user.UserShowAction)
+	Router.GET("/list", user.UserListAction)
 
 	viewPath := utils.Config.Section("router").Key("view_path").String()
 	Router.LoadHTMLGlob(viewPath)
