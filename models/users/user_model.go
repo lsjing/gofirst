@@ -38,6 +38,16 @@ func UserOneById(id string) (*entitys.User, bool, error) {
 	return user, has, err
 }
 
+func UserOneByName(name string) (*entitys.User, bool, error) {
+	orm := models.GetSlave()
+	user := new(entitys.User)
+	has, err := orm.Where("name=?", name).Get(user)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return user, has, err
+}
+
 func UserList() ([]entitys.User,error) {
 	orm:= models.GetSlave()
 	users := make([]entitys.User, 0)

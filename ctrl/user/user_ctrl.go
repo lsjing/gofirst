@@ -54,16 +54,21 @@ func WriteDBAction(ctx *gin.Context) {
 	}
 
 	//写入之前查询下是否已存在
-
-
-
-
-
-	age_int, _ := strconv.Atoi(ageStr)
-	err := user_model.UserAdd(&entitys.User{Name: name, Age: age_int})
-
+	_, has, err := user_model.UserOneByName(name)
 	code := 0
-	if !err {
+	if err != nil {
+		code = 1
+	}
+	if has {
+		code = 2
+		ctx.JSON(http.StatusOK, gin.H{"code": code, "msg": "user exist"})
+		return
+	}
+
+	ageInt, _ := strconv.Atoi(ageStr)
+	res := user_model.UserAdd(&entitys.User{Name: name, Age: ageInt})
+
+	if !res {
 		code = 3
 	}
 
