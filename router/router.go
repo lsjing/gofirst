@@ -30,6 +30,7 @@ func Setup() *gin.Engine {
 	//Router.GET("/show", user.UserShowAction)
 	Router.GET("/list", user.UserListAction)
 
+	Router.GET("/get/:user_id", user.GetUserAction)
 	viewPath := utils.Config.Section("router").Key("view_path").String()
 	Router.LoadHTMLGlob(viewPath)
 

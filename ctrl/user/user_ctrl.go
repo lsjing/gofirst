@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/lsjing/gofirst/models/users"
 	"github.com/lsjing/gofirst/entitys"
-	"github.com/lsjing/gofirst/utils"
+	//"github.com/lsjing/gofirst/utils"
 	"strconv"
 	//"github.com/thedevsaddam/govalidator"
 	"net/http"
@@ -38,14 +38,26 @@ func WriteDBAction(ctx *gin.Context) {
 	ageStrCount := utf8.RuneCountInString(ageStr)
 
 	if nameCount > 8 || nameCount < 3 {
-		ctx.JSON(http.StatusOK, utils.ResponseNode{Code: 1, Msg:"name长度错误"})
+		ctx.JSON(http.StatusOK, gin.H{
+			"code" : 1,
+			"msg"  : "name长度错误",
+		})
 		return
 	}
 
 	if ageStrCount > 2 || ageStrCount < 1 {
-		ctx.JSON(http.StatusOK, utils.ResponseNode{Code: 2, Msg:"age长度错误"})
+		ctx.JSON(http.StatusOK, gin.H{
+			"code" : 1,
+			"msg"  : "age长度错误",
+		})
 		return
 	}
+
+	//写入之前查询下是否已存在
+
+
+
+
 
 	age_int, _ := strconv.Atoi(ageStr)
 	err := user_model.UserAdd(&entitys.User{Name: name, Age: age_int})
@@ -69,4 +81,49 @@ func UserListAction(ctx *gin.Context) {
 		"msg" : "ok",
 		"data": xusers,
 	})
+}
+
+func GetUserAction(c *gin.Context) {
+	uid := c.Param("user_id")
+
+	u, has, err := user_model.UserOneById(uid)
+	code := 0
+	if err != nil {
+		code = 1
+	}
+
+	if !has {
+		c.JSON(http.StatusOK, gin.H{
+			"code"	:	code,
+			"msg"	:	"ok",
+			"data"	:	"",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code"	:	code,
+		"msg"	:	"ok",
+		"data"	:	u,
+	})
+
+}
+
+func Demo(ctx *gin.Context) {
+	u, err := user_model.UserOne()
+	code := 0
+	if err != false {
+		code = 1
+	}
+	if !u.IsEmpty() {
+		ctx.JSON(http.StatusOK, gin.H{
+			"code"	:	code,
+			"msg"	:	"ok",
+			"data"	:	u,
+		})
+		return
+	} else {
+		ctx.JSON(http.StatusOK, gin.H{"code":code,"msg":"ok","data":""})
+	}
+
 }

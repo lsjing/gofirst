@@ -27,6 +27,17 @@ func UserOne() (*entitys.User, bool) {
 	return user,has
 }
 
+func UserOneById(id string) (*entitys.User, bool, error) {
+	orm := models.GetSlave()
+	user := new(entitys.User)
+	has, err := orm.Where("user_id=?", id).Get(user)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return user, has, err
+}
+
 func UserList() ([]entitys.User,error) {
 	orm:= models.GetSlave()
 	users := make([]entitys.User, 0)

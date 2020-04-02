@@ -24,12 +24,10 @@ func init() {
 	m_dsn := utils.Config.Section("mysql_master").Key("master").String()
 
 	dbm, err = xorm.NewEngine("mysql", m_dsn)
-	dbm.SetMaxIdleConns(10)
-	dbm.SetMaxOpenConns(200)
+	dbm.SetMaxIdleConns(5)
+	dbm.SetMaxOpenConns(30)
 	dbm.ShowSQL(true)
 	dbm.ShowExecTime(true)
-
-
 
 	if err != nil {
 		fmt.Printf("Fail to connect to master: %v", err)
